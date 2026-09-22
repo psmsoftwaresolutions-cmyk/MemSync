@@ -1,0 +1,6 @@
+{
+  "name": "MemSync",
+  "description": "Edge-orchestrated local habit & workflow copilot with zero cloud leakage",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

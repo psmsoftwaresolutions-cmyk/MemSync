@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "description": "MemSync: Edge-Orchestrated Habit & Workflow Copilot",
   "scripts": {
-    "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
-    "dev:server": "npm --prefix server run dev",
-    "dev:client": "npm --prefix client run dev",
+    "dev": "npm --prefix client run build && node server/src/index.js",
+    "start": "node server/src/index.js",
     "build": "npm --prefix client run build",
     "test": "npm --prefix server test",
     "install:all": "npm --prefix server install && npm --prefix client install"
   },
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "keywords": [
     "edge-ai",
     "local-first",
