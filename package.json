@@ -1,0 +1,27 @@
+{
+  "name": "memsync",
+  "version": "1.0.0",
+  "description": "MemSync: Edge-Orchestrated Habit & Workflow Copilot",
+  "scripts": {
+    "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "test": "npm --prefix server test",
+    "install:all": "npm --prefix server install && npm --prefix client install"
+  },
+  "keywords": [
+    "edge-ai",
+    "local-first",
+    "tiny-habits",
+    "productivity",
+    "ollama",
+    "sqlite",
+    "privacy"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

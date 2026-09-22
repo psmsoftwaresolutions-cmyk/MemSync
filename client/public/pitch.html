@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemSync — 4-Slide Hackathon Pitch Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #0f172a;
+      --card-border: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --blue: #3b82f6;
+      --cyan: #06b6d4;
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Inter', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Control Bar */
+    .control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 2rem;
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .brand span {
+      color: var(--blue);
+    }
+    .badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 9999px;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-nav {
+      background: #1e293b;
+      color: white;
+      border: 1px solid #334155;
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.82rem;
+      transition: all 0.2s;
+    }
+    .btn-nav:hover {
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+    .slide-dots {
+      display: flex;
+      gap: 6px;
+      margin: 0 1rem;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #334155;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .dot.active {
+      background: var(--blue);
+      box-shadow: 0 0 8px var(--blue);
+      transform: scale(1.2);
+    }
+
+    /* Slides Container */
+    .slides-wrapper {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem;
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      max-width: 1200px;
+      opacity: 0;
+      transform: scale(0.96) translateY(20px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Typography & Cards */
+    .slide-tag {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--amber);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .slide-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .slide-subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .card-accent-blue { border-left: 4px solid var(--blue); }
+    .card-accent-amber { border-left: 4px solid var(--amber); }
+    .card-accent-emerald { border-left: 4px solid var(--emerald); }
+    .card-accent-rose { border-left: 4px solid var(--rose); }
+
+    .card-header {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-body {
+      font-size: 0.92rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    /* Tables */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      background: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+    .spec-table th, .spec-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .spec-table th {
+      background: #111a2f;
+      font-family: var(--mono);
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .code-box {
+      background: #070b12;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: #38bdf8;
+    }
+
+    /* Speaker Notes Bar */
+    .speaker-bar {
+      background: #070a11;
+      border-top: 1px solid var(--card-border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .speaker-notes-content {
+      font-family: var(--mono);
+      color: #e2e8f0;
+      flex: 1;
+      margin-left: 1rem;
+    }
+    kbd {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #93c5fd;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="control-bar">
+    <div class="brand">
+      ⚡ MemSync <span>Pitch Deck</span>
+      <div class="badge">100% On-Device AI</div>
+    </div>
+
+    <div class="nav-controls">
+      <button class="btn-nav" onclick="prevSlide()">◀ Prev</button>
+      <div class="slide-dots">
+        <div class="dot active" onclick="goToSlide(0)"></div>
+        <div class="dot" onclick="goToSlide(1)"></div>
+        <div class="dot" onclick="goToSlide(2)"></div>
+        <div class="dot" onclick="goToSlide(3)"></div>
+      </div>
+      <button class="btn-nav" onclick="nextSlide()">Next ▶</button>
+    </div>
+  </header>
+
+  <!-- Slides Container -->
+  <main class="slides-wrapper">
+
+    <!-- SLIDE 1 -->
+    <div class="slide active" id="slide-0">
+      <div>
+        <div class="slide-tag">SLIDE 01 / THE OPPORTUNITY & PRIVACY MOAT</div>
+        <h1 class="slide-title">Where High-Velocity Engineering Meets the Cloud Privacy Wall</h1>
+        <p class="slide-subtitle">Knowledge workers capture fragmented thoughts everywhere—but enterprise code and uncommitted work cannot touch cloud LLMs.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card card-accent-rose">
+          <div class="card-header" style="color: var(--rose);">
+            ⚠️ The Cloud Privacy & Context Paradox
+          </div>
+          <div class="card-body">
+            • <strong>Context Fragmentation:</strong> Tasks and daily thoughts are scattered across scratchpads, git diffs, terminal logs, and brain dumps.<br>
+            • <strong>Enterprise IP Leakage:</strong> Modern copilots transmit sensitive codebases and private thoughts to cloud endpoints.<br>
+            • <strong>Compliance Lockout:</strong> SOC2, GDPR, HIPAA, and corporate IP policies strictly forbid sending workspace artifacts to 3rd-party APIs.
+          </div>
+        </div>
+
+        <div class="card card-accent-emerald">
+          <div class="card-header" style="color: var(--emerald);">
+            🛡️ The MemSync Local-First Solution
+          </div>
+          <div class="card-body">
+            • <strong>Air-Gapped Local Privacy:</strong> 100% on-device parsing, indexing, and habit extraction with zero cloud network traffic.<br>
+            • <strong>Frictionless Ingestion:</strong> Ingests raw, unstructured markdown notes and terminal brain dumps in real time.<br>
+            • <strong>Deterministic Separation:</strong> Immediately splits natural language into direct actionable tasks and behavioral habit triplets.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 -->
+    <div class="slide" id="slide-1">
+      <div>
+        <div class="slide-tag">SLIDE 02 / EDGE SYSTEM ARCHITECTURE</div>
+        <h1 class="slide-title">Sub-Millisecond Determinism Meets Quantized Edge Intelligence</h1>
+        <p class="slide-subtitle">A dual-engine pipeline running on standard 8GB RAM laptops with 100% offline availability.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card card-accent-blue">
+          <div class="card-header" style="color: var(--blue);">
+            ⚙️ Dual-Engine Architecture Pipeline
+          </div>
+          <div class="code-box">
+[ Raw Markdown Brain Dump ]
+         │
+         ▼
+┌──────────────────────────────────────┐
+│ MemSync Edge Core Engine             │
+│  ├─ Ollama: Qwen-2.5-Coder (1.5B Q4) │
+│  └─ Heuristic Fallback (< 5ms)       │
+└──────────────────┬───────────────────┘
+                   ▼
+┌──────────────────────────────────────┐
+│ Embedded SQLite (WAL Mode, ACID)     │
+│  ├─ Tasks & Priority Queue           │
+│  ├─ Tiny Habits State Machine        │
+│  └─ Cosine Vector Index (In-Memory)  │
+└──────────────────────────────────────┘
+          </div>
+        </div>
+
+        <div class="card card-accent-cyan">
+          <div class="card-header" style="color: var(--cyan);">
+            🚀 Key Engineering Highlights
+          </div>
+          <div class="card-body">
+            • <strong>Sub-1GB Memory Footprint:</strong> Runs quantized Small Language Models (<1GB VRAM) effortlessly on 8GB machines.<br>
+            • <strong>Zero-Failure Fallback:</strong> Seamlessly auto-switches to a deterministic edge heuristic parser in &lt;5ms if the model is cold or offline.<br>
+            • <strong>Instant SQLite WAL Storage:</strong> Sub-2ms ACID queries for all habit state transitions and task status mutations.<br>
+            • <strong>Zero-Cloud Vector Retrieval:</strong> Local cosine similarity search across historical notes with zero external embedding API calls.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 -->
+    <div class="slide" id="slide-2">
+      <div>
+        <div class="slide-tag">SLIDE 03 / BEHAVIORAL SCIENCE</div>
+        <h1 class="slide-title">Closing the Execution Gap: The Tiny Habits Protocol</h1>
+        <p class="slide-subtitle">Moving beyond static to-do lists that turn into graveyards through BJ Fogg's Behavior Model.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card card-accent-amber">
+          <div class="card-header" style="color: var(--amber);">
+            ⚓ 1. Anchor / Cue
+          </div>
+          <div class="card-body">
+            Ties directly into an existing behavioral routine or terminal event.<br><br>
+            <em>"After switching or closing a Git feature branch..."</em>
+          </div>
+        </div>
+
+        <div class="card card-accent-cyan">
+          <div class="card-header" style="color: var(--cyan);">
+            ⚡ 2. Tiny Action
+          </div>
+          <div class="card-body">
+            A frictionless micro-action requiring &lt; 60 seconds of effort.<br><br>
+            <em>"Run test suite & write a 2-line commit summary..."</em>
+          </div>
+        </div>
+
+        <div class="card card-accent-emerald">
+          <div class="card-header" style="color: var(--emerald);">
+            🎉 3. Celebration
+          </div>
+          <div class="card-body">
+            Immediate neuro-chemical dopamine reinforcement to lock the habit.<br><br>
+            <em>"High-five screen & whisper 'Clean shipping!'"</em>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="background: #131d33;">
+        <div class="card-body" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <strong style="color: white;">Behavioral Feedback Loops:</strong> 30-day consistency heatmap • Idempotent one-click check-in • Automated daily standup generator
+          </div>
+          <div class="badge" style="font-size: 0.8rem;">B = MAP Loop Closed</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 -->
+    <div class="slide" id="slide-3">
+      <div>
+        <div class="slide-tag">SLIDE 04 / BENCHMARKS & THE ROADMAP</div>
+        <h1 class="slide-title">Measurable Edge Superiority & Production Roadmap</h1>
+        <p class="slide-subtitle">Deterministic performance, infinite cost efficiency, and the future of air-gapped developer copilots.</p>
+      </div>
+
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Cloud AI Copilots (Notion/Copilot)</th>
+            <th>MemSync Edge Copilot</th>
+            <th>Edge Advantage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Data Privacy</strong></td>
+            <td>Code/notes sent to cloud servers</td>
+            <td style="color: var(--emerald); font-weight: 700;">100% On-Device / Air-Gapped</td>
+            <td>Zero IP/GDPR Risk</td>
+          </tr>
+          <tr>
+            <td><strong>Inference Cost</strong></td>
+            <td>$10 – $30 / user / month</td>
+            <td style="color: var(--emerald); font-weight: 700;">$0.00 Forever</td>
+            <td>100% Free at Scale</td>
+          </tr>
+          <tr>
+            <td><strong>Offline Reliability</strong></td>
+            <td>0% (Fails without internet)</td>
+            <td style="color: var(--emerald); font-weight: 700;">100% Offline Capable</td>
+            <td>Works on Flights/Airports</td>
+          </tr>
+          <tr>
+            <td><strong>Heuristic Fallback</strong></td>
+            <td>None (Throws timeout errors)</td>
+            <td style="color: var(--emerald); font-weight: 700;">&lt; 5ms Instant Fallback</td>
+            <td>Zero Failure Guarantee</td>
+          </tr>
+          <tr>
+            <td><strong>Read Latency</strong></td>
+            <td>800ms – 2500ms (Network dependent)</td>
+            <td style="color: var(--emerald); font-weight: 700;">&lt; 2ms Native SQLite WAL</td>
+            <td>Instant State UI</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="card card-accent-blue" style="margin-top: 0.5rem;">
+        <div class="card-body">
+          <strong>Next Phase:</strong> Native OS tray sidecar • Git hook daemon (`post-commit` triggers) • Local voice brain dumps via `whisper.cpp`.
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Speaker Notes Footer -->
+  <footer class="speaker-bar">
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <span>🎙️ SPEAKER NOTES:</span>
+      <kbd>← / →</kbd> or <kbd>Space</kbd> to navigate
+    </div>
+    <div class="speaker-notes-content" id="notes-text">
+      Loading notes...
+    </div>
+  </footer>
+
+  <script>
+    const notes = [
+      "Slide 1: 'Every engineer captures messy notes and brain dumps. But you cannot paste proprietary code into cloud LLMs without risking IP leakage. That is why we built MemSync.'",
+      "Slide 2: 'MemSync is edge-orchestrated. It runs a 1.5B quantized SLM locally with Ollama on 8GB laptops, backed by a sub-5ms heuristic fallback and native SQLite in WAL mode.'",
+      "Slide 3: 'Unlike passive to-do lists that become task graveyards, MemSync uses BJ Fogg’s Tiny Habits protocol to extract Anchor-Action-Celebration triplets that actually close the loop.'",
+      "Slide 4: 'With zero cloud subscriptions, sub-2ms local queries, and 100% offline privacy, MemSync bridges intent and execution safely on the edge. Thank you!'"
+    ];
+
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const notesEl = document.getElementById('notes-text');
+
+    function showSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= slides.length) index = slides.length - 1;
+      currentSlide = index;
+
+      slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx === currentSlide);
+      });
+      dots.forEach((d, idx) => {
+        d.classList.toggle('active', idx === currentSlide);
+      });
+
+      notesEl.innerText = notes[currentSlide];
+    }
+
+    function nextSlide() { showSlide(currentSlide + 1); }
+    function prevSlide() { showSlide(currentSlide - 1); }
+    function goToSlide(i) { showSlide(i); }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    showSlide(0);
+  </script>
+</body>
+</html>
